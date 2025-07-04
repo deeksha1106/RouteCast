@@ -1,0 +1,5 @@
+/node_modules
+/api-server/node_modules
+/producer/node_modules
+/consumer/node_modules
+/frontend/node_modules
