@@ -17,7 +17,7 @@ services:
       - key: KAFKA_SASL_MECHANISM
         value: PLAIN
 
-  - type: worker
+  - type: web
     name: kafka-consumer
     env: node
     plan: free
@@ -35,7 +35,7 @@ services:
       - key: KAFKA_SASL_MECHANISM
         value: PLAIN
 
-  - type: worker
+  - type: web
     name: kafka-producer
     env: node
     plan: free
