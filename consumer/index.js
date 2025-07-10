@@ -2,7 +2,9 @@ const { Kafka } = require('kafkajs');
 const redis = require('redis');
 require('dotenv').config();
 
-const client = redis.createClient();
+const client = redis.createClient({
+  url: process.env.REDIS_URL,
+});
 client.connect();
 
 const kafka = new Kafka({
