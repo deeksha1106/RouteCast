@@ -1,15 +1,26 @@
 const { Kafka } = require('kafkajs');
 const redis = require('redis');
-const client = redis.createClient();
+require('dotenv').config();
 
+const client = redis.createClient();
 client.connect();
 
-const kafka = new Kafka({ clientId: 'location-consumer', brokers: ['localhost:9092'] });
+const kafka = new Kafka({
+  clientId: 'location-consumer',
+  brokers: [process.env.KAFKA_BROKER],
+  ssl: true,
+  sasl: {
+    mechanism: process.env.KAFKA_SASL_MECHANISM, // 'plain'
+    username: process.env.KAFKA_USERNAME,
+    password: process.env.KAFKA_PASSWORD,
+  },
+});
+
 const consumer = kafka.consumer({ groupId: 'location-group' });
 
 const consume = async () => {
   await consumer.connect();
-  await consumer.subscribe({ topic: 'driver-locations', fromBeginning: false });
+  await consumer.subscribe({ topic: process.env.TOPIC_NAME, fromBeginning: false });
 
   await consumer.run({
     eachMessage: async ({ message }) => {
