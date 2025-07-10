@@ -7,14 +7,18 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-
 const driverIcon = new L.Icon({
   iconUrl: '/images/driver-icon.png',
-  iconSize: [32, 32],      
-  iconAnchor: [16, 32],     
-  popupAnchor: [0, -32],    
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
 });
 
+
+const defaultLocation = {
+  lat: 26.9124,
+  lng: 75.7873,
+};
 
 function App() {
   const [location, setLocation] = useState(null);
@@ -24,11 +28,24 @@ function App() {
     const interval = setInterval(async () => {
       try {
         const res = await axios.get(`${backendUrl}/location/driver_001`);
-        if (res.status === 204) return; // skip updating if data is stale
-        console.log('Received location:', res.data);
-        setLocation({ lat: res.data.lat, lng: res.data.lng }); // extract lat/lng only
+
+        
+        if (
+          res.status === 200 &&
+          res.data &&
+          typeof res.data.lat === 'number' &&
+          typeof res.data.lng === 'number'
+        ) {
+          console.log('✅ Received location:', res.data);
+          setLocation({ lat: res.data.lat, lng: res.data.lng });
+        } else {
+          console.warn('⚠️ No valid data received. Using last or default location.');
+        
+          setLocation((prev) => prev ?? defaultLocation);
+        }
       } catch (error) {
-        console.error('Error fetching location:', error);
+        console.error('❌ Error fetching location:', error);
+        setLocation((prev) => prev ?? defaultLocation);
       }
     }, 3000);
 
