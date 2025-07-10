@@ -3,7 +3,7 @@ const cors = require('cors'); // <--- ADD THIS
 const redis = require('./redis');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Enable CORS for all origins (or restrict it below)
 app.use(cors()); // <--- ADD THIS LINE
