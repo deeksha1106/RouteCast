@@ -28,7 +28,9 @@ const consume = async () => {
     eachMessage: async ({ message }) => {
       const location = JSON.parse(message.value.toString());
       console.log('✅ Received:', location);
-      await client.set(location.driverId, JSON.stringify(location));
+      await client.set(location.driverId, JSON.stringify(location), {
+        EX: 6
+    });
     },
   });
 };
