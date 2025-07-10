@@ -1,19 +1,33 @@
 const express = require('express');
-const cors = require('cors'); // <--- ADD THIS
+const cors = require('cors');
 const redis = require('./redis');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const THRESHOLD_MS = 6 * 1000; // 6 seconds
 
-// Enable CORS for all origins (or restrict it below)
-app.use(cors()); // <--- ADD THIS LINE
+app.use(cors());
 
 app.get('/location/:driverId', async (req, res) => {
-  const data = await redis.get(req.params.driverId);
-  if (data) {
-    res.json(JSON.parse(data));
-  } else {
-    res.status(404).json({ error: 'Driver not found' });
+  try {
+    const data = await redis.get(req.params.driverId);
+
+    if (!data) {
+      return res.status(404).json({ error: 'Driver not found' });
+    }
+
+    const parsed = JSON.parse(data);
+
+  
+    const now = Date.now();
+    if (!parsed.timestamp || now - parsed.timestamp > THRESHOLD_MS) {
+      return res.status(204).send(); 
+    }
+
+    return res.json(parsed);
+  } catch (error) {
+    console.error('Error fetching location:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
