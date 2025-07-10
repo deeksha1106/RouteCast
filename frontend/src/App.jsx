@@ -23,7 +23,8 @@ function App() {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-const res = await axios.get(`${backendUrl}/location/driver_001`);
+        const res = await axios.get(`${backendUrl}/location/driver_001`);
+        if (res.status === 204) return; // skip updating if data is stale
         console.log('Received location:', res.data);
         setLocation({ lat: res.data.lat, lng: res.data.lng }); // extract lat/lng only
       } catch (error) {
