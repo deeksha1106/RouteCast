@@ -18,5 +18,5 @@ app.get('/location/:driverId', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 API server running at http://localhost:${PORT}`);
+  console.log(`🚀 API server running at https://routecast-1.onrender.com:${PORT}`);
 });
